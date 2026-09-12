@@ -1,0 +1,316 @@
+asyncapi: 3.0.0
+info:
+  title: chat_api
+  version: "0.1.0"
+  description: Realtime chat API
+    Realtime chat backend
+servers:
+  main:
+    host: localhost:8080/ws
+    protocol: ws
+    security:
+      - $ref: '#/components/securitySchemes/jwt'
+channels:
+  ws:
+    address: /ws
+    messages:
+      - users_create: { $ref: '#/components/messages/users_create' }
+      - users_create: { $ref: '#/components/messages/users_createOk' }
+      - users_get: { $ref: '#/components/messages/users_get' }
+      - users_get: { $ref: '#/components/messages/users_getOk' }
+      - users_list: { $ref: '#/components/messages/users_list' }
+      - users_list: { $ref: '#/components/messages/users_listOk' }
+      - users_update: { $ref: '#/components/messages/users_update' }
+      - users_update: { $ref: '#/components/messages/users_updateOk' }
+      - users_delete: { $ref: '#/components/messages/users_delete' }
+      - users_delete: { $ref: '#/components/messages/users_deleteOk' }
+      - rooms_create: { $ref: '#/components/messages/rooms_create' }
+      - rooms_create: { $ref: '#/components/messages/rooms_createOk' }
+      - rooms_get: { $ref: '#/components/messages/rooms_get' }
+      - rooms_get: { $ref: '#/components/messages/rooms_getOk' }
+      - rooms_list: { $ref: '#/components/messages/rooms_list' }
+      - rooms_list: { $ref: '#/components/messages/rooms_listOk' }
+      - rooms_update: { $ref: '#/components/messages/rooms_update' }
+      - rooms_update: { $ref: '#/components/messages/rooms_updateOk' }
+      - rooms_delete: { $ref: '#/components/messages/rooms_delete' }
+      - rooms_delete: { $ref: '#/components/messages/rooms_deleteOk' }
+      - messages_create: { $ref: '#/components/messages/messages_create' }
+      - messages_create: { $ref: '#/components/messages/messages_createOk' }
+      - messages_get: { $ref: '#/components/messages/messages_get' }
+      - messages_get: { $ref: '#/components/messages/messages_getOk' }
+      - messages_list: { $ref: '#/components/messages/messages_list' }
+      - messages_list: { $ref: '#/components/messages/messages_listOk' }
+      - messages_update: { $ref: '#/components/messages/messages_update' }
+      - messages_update: { $ref: '#/components/messages/messages_updateOk' }
+      - messages_delete: { $ref: '#/components/messages/messages_delete' }
+      - messages_delete: { $ref: '#/components/messages/messages_deleteOk' }
+      - roomJoin: { $ref: '#/components/messages/RoomJoin' }
+      - roomLeave: { $ref: '#/components/messages/RoomLeave' }
+      - roomMessage: { $ref: '#/components/messages/RoomMessage' }
+      - error: { $ref: '#/components/messages/Error' }
+operations:
+  users_create:
+    action: send
+    channel: { $ref: '#/channels/ws' }
+    messages:
+      - $ref: '#/components/messages/users_create'
+    reply:
+      messages:
+        - $ref: '#/components/messages/users_createOk'
+        - $ref: '#/components/messages/Error'
+  users_get:
+    action: send
+    channel: { $ref: '#/channels/ws' }
+    messages:
+      - $ref: '#/components/messages/users_get'
+    reply:
+      messages:
+        - $ref: '#/components/messages/users_getOk'
+        - $ref: '#/components/messages/Error'
+  users_list:
+    action: send
+    channel: { $ref: '#/channels/ws' }
+    messages:
+      - $ref: '#/components/messages/users_list'
+    reply:
+      messages:
+        - $ref: '#/components/messages/users_listOk'
+        - $ref: '#/components/messages/Error'
+  users_update:
+    action: send
+    channel: { $ref: '#/channels/ws' }
+    messages:
+      - $ref: '#/components/messages/users_update'
+    reply:
+      messages:
+        - $ref: '#/components/messages/users_updateOk'
+        - $ref: '#/components/messages/Error'
+  users_delete:
+    action: send
+    channel: { $ref: '#/channels/ws' }
+    messages:
+      - $ref: '#/components/messages/users_delete'
+    reply:
+      messages:
+        - $ref: '#/components/messages/users_deleteOk'
+        - $ref: '#/components/messages/Error'
+  rooms_create:
+    action: send
+    channel: { $ref: '#/channels/ws' }
+    messages:
+      - $ref: '#/components/messages/rooms_create'
+    reply:
+      messages:
+        - $ref: '#/components/messages/rooms_createOk'
+        - $ref: '#/components/messages/Error'
+  rooms_get:
+    action: send
+    channel: { $ref: '#/channels/ws' }
+    messages:
+      - $ref: '#/components/messages/rooms_get'
+    reply:
+      messages:
+        - $ref: '#/components/messages/rooms_getOk'
+        - $ref: '#/components/messages/Error'
+  rooms_list:
+    action: send
+    channel: { $ref: '#/channels/ws' }
+    messages:
+      - $ref: '#/components/messages/rooms_list'
+    reply:
+      messages:
+        - $ref: '#/components/messages/rooms_listOk'
+        - $ref: '#/components/messages/Error'
+  rooms_update:
+    action: send
+    channel: { $ref: '#/channels/ws' }
+    messages:
+      - $ref: '#/components/messages/rooms_update'
+    reply:
+      messages:
+        - $ref: '#/components/messages/rooms_updateOk'
+        - $ref: '#/components/messages/Error'
+  rooms_delete:
+    action: send
+    channel: { $ref: '#/channels/ws' }
+    messages:
+      - $ref: '#/components/messages/rooms_delete'
+    reply:
+      messages:
+        - $ref: '#/components/messages/rooms_deleteOk'
+        - $ref: '#/components/messages/Error'
+  messages_create:
+    action: send
+    channel: { $ref: '#/channels/ws' }
+    messages:
+      - $ref: '#/components/messages/messages_create'
+    reply:
+      messages:
+        - $ref: '#/components/messages/messages_createOk'
+        - $ref: '#/components/messages/Error'
+  messages_get:
+    action: send
+    channel: { $ref: '#/channels/ws' }
+    messages:
+      - $ref: '#/components/messages/messages_get'
+    reply:
+      messages:
+        - $ref: '#/components/messages/messages_getOk'
+        - $ref: '#/components/messages/Error'
+  messages_list:
+    action: send
+    channel: { $ref: '#/channels/ws' }
+    messages:
+      - $ref: '#/components/messages/messages_list'
+    reply:
+      messages:
+        - $ref: '#/components/messages/messages_listOk'
+        - $ref: '#/components/messages/Error'
+  messages_update:
+    action: send
+    channel: { $ref: '#/channels/ws' }
+    messages:
+      - $ref: '#/components/messages/messages_update'
+    reply:
+      messages:
+        - $ref: '#/components/messages/messages_updateOk'
+        - $ref: '#/components/messages/Error'
+  messages_delete:
+    action: send
+    channel: { $ref: '#/channels/ws' }
+    messages:
+      - $ref: '#/components/messages/messages_delete'
+    reply:
+      messages:
+        - $ref: '#/components/messages/messages_deleteOk'
+        - $ref: '#/components/messages/Error'
+  roomMessage:
+    action: receive
+    channel: { $ref: '#/channels/ws' }
+    messages:
+      - $ref: '#/components/messages/roomMessage'
+components:
+  messages:
+    Error:
+      payload: { $ref: '#/components/schemas/ErrorPayload' }
+    roomJoin:
+      payload: { $ref: '#/components/schemas/RoomRef' }
+    roomLeave:
+      payload: { $ref: '#/components/schemas/RoomRef' }
+    roomMessage:
+      payload: { $ref: '#/components/schemas/RoomMessage' }
+    users_create:
+      payload: { $ref: '#/components/schemas/Users' }
+    users_createOk:
+      payload: { $ref: '#/components/schemas/Users' }
+    users_get:
+      payload: { $ref: '#/components/schemas/IdRef' }
+    users_getOk:
+      payload: { $ref: '#/components/schemas/Users' }
+    users_list:
+      payload: { $ref: '#/components/schemas/PageRef' }
+    users_listOk:
+      payload: { $ref: '#/components/schemas/UsersList' }
+    users_update:
+      payload: { $ref: '#/components/schemas/Users' }
+    users_updateOk:
+      payload: { $ref: '#/components/schemas/Users' }
+    users_delete:
+      payload: { $ref: '#/components/schemas/IdRef' }
+    users_deleteOk:
+      payload: { $ref: '#/components/schemas/Users' }
+    rooms_create:
+      payload: { $ref: '#/components/schemas/Rooms' }
+    rooms_createOk:
+      payload: { $ref: '#/components/schemas/Rooms' }
+    rooms_get:
+      payload: { $ref: '#/components/schemas/IdRef' }
+    rooms_getOk:
+      payload: { $ref: '#/components/schemas/Rooms' }
+    rooms_list:
+      payload: { $ref: '#/components/schemas/PageRef' }
+    rooms_listOk:
+      payload: { $ref: '#/components/schemas/RoomsList' }
+    rooms_update:
+      payload: { $ref: '#/components/schemas/Rooms' }
+    rooms_updateOk:
+      payload: { $ref: '#/components/schemas/Rooms' }
+    rooms_delete:
+      payload: { $ref: '#/components/schemas/IdRef' }
+    rooms_deleteOk:
+      payload: { $ref: '#/components/schemas/Rooms' }
+    messages_create:
+      payload: { $ref: '#/components/schemas/Messages' }
+    messages_createOk:
+      payload: { $ref: '#/components/schemas/Messages' }
+    messages_get:
+      payload: { $ref: '#/components/schemas/IdRef' }
+    messages_getOk:
+      payload: { $ref: '#/components/schemas/Messages' }
+    messages_list:
+      payload: { $ref: '#/components/schemas/PageRef' }
+    messages_listOk:
+      payload: { $ref: '#/components/schemas/MessagesList' }
+    messages_update:
+      payload: { $ref: '#/components/schemas/Messages' }
+    messages_updateOk:
+      payload: { $ref: '#/components/schemas/Messages' }
+    messages_delete:
+      payload: { $ref: '#/components/schemas/IdRef' }
+    messages_deleteOk:
+      payload: { $ref: '#/components/schemas/Messages' }
+  schemas:
+    ErrorPayload:
+      type: object
+      properties: { code: { type: string }, message: { type: string } }
+    IdRef:
+      type: object
+      properties: { id: {} }
+    PageRef:
+      type: object
+      properties: { limit: { type: integer }, offset: { type: integer } }
+    RoomRef:
+      type: object
+      properties: { room: { type: string } }
+    RoomMessage:
+      type: object
+      properties: { room: { type: string }, from: { type: string }, data: {} }
+    Users:
+      type: object
+      description: application users
+      properties:
+        id: { type: string }
+        username: { type: string }
+        email: { type: string }
+        status: { type: string }
+        createdAt: { type: string }
+        updatedAt: { type: string }
+    UsersList:
+      type: array
+      items: { $ref: '#/components/schemas/Users' }
+    Rooms:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+    RoomsList:
+      type: array
+      items: { $ref: '#/components/schemas/Rooms' }
+    Messages:
+      type: object
+      properties:
+        id: { type: integer }
+        roomId: { type: integer }
+        authorId: { type: string }
+        body: { type: string }
+        status: { type: string }
+        createdAt: { type: string }
+        updatedAt: { type: string }
+    MessagesList:
+      type: array
+      items: { $ref: '#/components/schemas/Messages' }
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

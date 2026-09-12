@@ -1,0 +1,18 @@
+app:
+  name: chat_api
+  env: ${APP_ENV:-development}
+server:
+  host: ${APP_HOST:-0.0.0.0}
+  port: 8080
+  wsPath: /ws
+  readBuffer: 4096
+  writeBuffer: 4096
+  pingIntervalSeconds: 30
+database:
+  url: ${DATABASE_URL}
+security:
+  jwtSecret: ${JWT_SECRET}
+  jwtTtlMinutes: 60
+tls:
+  certFile: ${TLS_CERT_FILE:-}
+  keyFile: ${TLS_KEY_FILE:-}

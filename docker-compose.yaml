@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      JWT_SECRET: dev-secret
+DATABASE_URL: file:/data/chat_api.db?_pragma=foreign_keys(1)
+    volumes:
+      - app-data:/data
+volumes:
+  app-data:
