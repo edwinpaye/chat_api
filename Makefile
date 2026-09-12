@@ -10,4 +10,5 @@ test:
 	go test ./...
 
 tidy:
-	go mod tidy
+	go mod tidymigrate:
+	@echo "apply migrations/0001_init.sql against DATABASE_URL=$$DATABASE_URL"

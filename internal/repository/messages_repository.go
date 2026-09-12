@@ -27,19 +27,12 @@ const messagesColumns = "id, room_id, author_id, body, status, created_at, updat
 
 func (r *messagesRepo) Create(ctx context.Context, e *domain.Messages) error {
 	q := `INSERT INTO messages (room_id, author_id, body, status, created_at, updated_at)
-	VALUES (?, ?, ?, ?, ?, ?)`
-	res, err := r.db.ExecContext(ctx, q, e.RoomId, e.AuthorId, e.Body, e.Status, e.CreatedAt, e.UpdatedAt)
-	if err != nil {
-		return err
-	}
-	id, err := res.LastInsertId()
-	if err == nil {
-		e.Id = int64(id)
-	}
-	return nil}
+	VALUES ($1, $2, $3, $4, $5, $6)`
+q += " RETURNING id"
+	return r.db.QueryRowContext(ctx, q, e.RoomId, e.AuthorId, e.Body, e.Status, e.CreatedAt, e.UpdatedAt).Scan(&e.Id)}
 
 func (r *messagesRepo) Get(ctx context.Context, id int64) (*domain.Messages, error) {
-	q := `SELECT ` + messagesColumns + ` FROM messages WHERE id = ?`
+	q := `SELECT ` + messagesColumns + ` FROM messages WHERE id = $1`
 	var e domain.Messages
 	err := r.db.QueryRowContext(ctx, q, id).Scan(&e.Id, &e.RoomId, &e.AuthorId, &e.Body, &e.Status, &e.CreatedAt, &e.UpdatedAt)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -55,7 +48,7 @@ func (r *messagesRepo) List(ctx context.Context, limit, offset int) ([]domain.Me
 	if limit <= 0 || limit > 500 {
 		limit = 100
 	}
-	q := `SELECT ` + messagesColumns + ` FROM messages ORDER BY id LIMIT ? OFFSET ?`
+	q := `SELECT ` + messagesColumns + ` FROM messages ORDER BY id LIMIT $1 OFFSET $2`
 	rows, err := r.db.QueryContext(ctx, q, limit, offset)
 	if err != nil {
 		return nil, err
@@ -73,7 +66,7 @@ func (r *messagesRepo) List(ctx context.Context, limit, offset int) ([]domain.Me
 }
 
 func (r *messagesRepo) Update(ctx context.Context, e *domain.Messages) error {
-	q := `UPDATE messages SET room_id = ?, author_id = ?, body = ?, status = ?, created_at = ?, updated_at = ? WHERE id = ?`
+	q := `UPDATE messages SET room_id = $1, author_id = $2, body = $3, status = $4, created_at = $5, updated_at = $6 WHERE id = $7`
 	res, err := r.db.ExecContext(ctx, q, e.RoomId, e.AuthorId, e.Body, e.Status, e.CreatedAt, e.UpdatedAt, e.Id)
 	if err != nil {
 		return err
@@ -86,7 +79,7 @@ func (r *messagesRepo) Update(ctx context.Context, e *domain.Messages) error {
 }
 
 func (r *messagesRepo) Delete(ctx context.Context, id int64) error {
-	q := `DELETE FROM messages WHERE id = ?`
+	q := `DELETE FROM messages WHERE id = $1`
 	res, err := r.db.ExecContext(ctx, q, id)
 	if err != nil {
 		return err

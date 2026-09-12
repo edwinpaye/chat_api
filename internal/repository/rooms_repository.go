@@ -26,20 +26,13 @@ func NewRoomsRepository(db *sql.DB) RoomsRepository {
 const roomsColumns = "id, name"
 
 func (r *roomsRepo) Create(ctx context.Context, e *domain.Rooms) error {
-	q := `INSERT INTO rooms (name)
-	VALUES (?)`
-	res, err := r.db.ExecContext(ctx, q, e.Name)
-	if err != nil {
-		return err
-	}
-	id, err := res.LastInsertId()
-	if err == nil {
-		e.Id = int64(id)
-	}
-	return nil}
+	q := `INSERT INTO auth.rooms (name)
+	VALUES ($1)`
+q += " RETURNING id"
+	return r.db.QueryRowContext(ctx, q, e.Name).Scan(&e.Id)}
 
 func (r *roomsRepo) Get(ctx context.Context, id int64) (*domain.Rooms, error) {
-	q := `SELECT ` + roomsColumns + ` FROM rooms WHERE id = ?`
+	q := `SELECT ` + roomsColumns + ` FROM auth.rooms WHERE id = $1`
 	var e domain.Rooms
 	err := r.db.QueryRowContext(ctx, q, id).Scan(&e.Id, &e.Name)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -55,7 +48,7 @@ func (r *roomsRepo) List(ctx context.Context, limit, offset int) ([]domain.Rooms
 	if limit <= 0 || limit > 500 {
 		limit = 100
 	}
-	q := `SELECT ` + roomsColumns + ` FROM rooms ORDER BY id LIMIT ? OFFSET ?`
+	q := `SELECT ` + roomsColumns + ` FROM auth.rooms ORDER BY id LIMIT $1 OFFSET $2`
 	rows, err := r.db.QueryContext(ctx, q, limit, offset)
 	if err != nil {
 		return nil, err
@@ -73,7 +66,7 @@ func (r *roomsRepo) List(ctx context.Context, limit, offset int) ([]domain.Rooms
 }
 
 func (r *roomsRepo) Update(ctx context.Context, e *domain.Rooms) error {
-	q := `UPDATE rooms SET name = ? WHERE id = ?`
+	q := `UPDATE auth.rooms SET name = $1 WHERE id = $2`
 	res, err := r.db.ExecContext(ctx, q, e.Name, e.Id)
 	if err != nil {
 		return err
@@ -86,7 +79,7 @@ func (r *roomsRepo) Update(ctx context.Context, e *domain.Rooms) error {
 }
 
 func (r *roomsRepo) Delete(ctx context.Context, id int64) error {
-	q := `DELETE FROM rooms WHERE id = ?`
+	q := `DELETE FROM auth.rooms WHERE id = $1`
 	res, err := r.db.ExecContext(ctx, q, id)
 	if err != nil {
 		return err

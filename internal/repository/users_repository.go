@@ -23,25 +23,18 @@ func NewUsersRepository(db *sql.DB) UsersRepository {
 	return &usersRepo{db: db}
 }
 
-const usersColumns = "id, username, email, status, created_at, updated_at"
+const usersColumns = "id, username, email, status, online, last_seen, created_at, updated_at"
 
 func (r *usersRepo) Create(ctx context.Context, e *domain.Users) error {
-	q := `INSERT INTO users (username, email, status, created_at, updated_at)
-	VALUES (?, ?, ?, ?, ?)`
-	res, err := r.db.ExecContext(ctx, q, e.Username, e.Email, e.Status, e.CreatedAt, e.UpdatedAt)
-	if err != nil {
-		return err
-	}
-	id, err := res.LastInsertId()
-	if err == nil {
-		e.Id = string(id)
-	}
-	return nil}
+	q := `INSERT INTO auth.users (username, email, status, online, last_seen, created_at, updated_at)
+	VALUES ($1, $2, $3, $4, $5, $6, $7)`
+q += " RETURNING id"
+	return r.db.QueryRowContext(ctx, q, e.Username, e.Email, e.Status, e.Online, e.LastSeen, e.CreatedAt, e.UpdatedAt).Scan(&e.Id)}
 
 func (r *usersRepo) Get(ctx context.Context, id string) (*domain.Users, error) {
-	q := `SELECT ` + usersColumns + ` FROM users WHERE id = ?`
+	q := `SELECT ` + usersColumns + ` FROM auth.users WHERE id = $1`
 	var e domain.Users
-	err := r.db.QueryRowContext(ctx, q, id).Scan(&e.Id, &e.Username, &e.Email, &e.Status, &e.CreatedAt, &e.UpdatedAt)
+	err := r.db.QueryRowContext(ctx, q, id).Scan(&e.Id, &e.Username, &e.Email, &e.Status, &e.Online, &e.LastSeen, &e.CreatedAt, &e.UpdatedAt)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, domain.ErrNotFound
 	}
@@ -55,7 +48,7 @@ func (r *usersRepo) List(ctx context.Context, limit, offset int) ([]domain.Users
 	if limit <= 0 || limit > 500 {
 		limit = 100
 	}
-	q := `SELECT ` + usersColumns + ` FROM users ORDER BY id LIMIT ? OFFSET ?`
+	q := `SELECT ` + usersColumns + ` FROM auth.users ORDER BY id LIMIT $1 OFFSET $2`
 	rows, err := r.db.QueryContext(ctx, q, limit, offset)
 	if err != nil {
 		return nil, err
@@ -64,7 +57,7 @@ func (r *usersRepo) List(ctx context.Context, limit, offset int) ([]domain.Users
 	var out []domain.Users
 	for rows.Next() {
 		var e domain.Users
-		if err := rows.Scan(&e.Id, &e.Username, &e.Email, &e.Status, &e.CreatedAt, &e.UpdatedAt); err != nil {
+		if err := rows.Scan(&e.Id, &e.Username, &e.Email, &e.Status, &e.Online, &e.LastSeen, &e.CreatedAt, &e.UpdatedAt); err != nil {
 			return nil, err
 		}
 		out = append(out, e)
@@ -73,8 +66,8 @@ func (r *usersRepo) List(ctx context.Context, limit, offset int) ([]domain.Users
 }
 
 func (r *usersRepo) Update(ctx context.Context, e *domain.Users) error {
-	q := `UPDATE users SET username = ?, email = ?, status = ?, created_at = ?, updated_at = ? WHERE id = ?`
-	res, err := r.db.ExecContext(ctx, q, e.Username, e.Email, e.Status, e.CreatedAt, e.UpdatedAt, e.Id)
+	q := `UPDATE auth.users SET username = $1, email = $2, status = $3, online = $4, last_seen = $5, created_at = $6, updated_at = $7 WHERE id = $8`
+	res, err := r.db.ExecContext(ctx, q, e.Username, e.Email, e.Status, e.Online, e.LastSeen, e.CreatedAt, e.UpdatedAt, e.Id)
 	if err != nil {
 		return err
 	}
@@ -86,7 +79,7 @@ func (r *usersRepo) Update(ctx context.Context, e *domain.Users) error {
 }
 
 func (r *usersRepo) Delete(ctx context.Context, id string) error {
-	q := `DELETE FROM users WHERE id = ?`
+	q := `DELETE FROM auth.users WHERE id = $1`
 	res, err := r.db.ExecContext(ctx, q, id)
 	if err != nil {
 		return err

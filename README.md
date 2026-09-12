@@ -9,11 +9,11 @@ cmd/server            entrypoint
 internal/config       configuration loading (yaml + env, ${VAR} interpolation)
 internal/platform     infrastructure (database connection)
 internal/domain       entities & errors (pure)
-internal/repository   persistence ports + sqlite adapters
+internal/repository   persistence ports + postgres adapters
 internal/service      application use cases
 internal/security     JWT issue/verify
 internal/transport/ws WebSocket transport: protocol, hub, clients, handlers
-migrations            SQL migrations (sqlite)
+migrations            SQL migrations (postgres)
 ```
 
 Dependencies flow inwards: transport → service → repository → domain. Domain
